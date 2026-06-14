@@ -58,8 +58,8 @@
   }
   .section {
     background: #fff; border-radius: 8px; padding: 15px; 
-    flex: 1 1 calc(50% - 20px); /* Takes up half screen minus gap */
-    min-width: 280px; /* Stacks on mobile when screen is too narrow */
+    flex: 1 1 calc(50% - 20px); 
+    min-width: 280px; 
     box-sizing: border-box; box-shadow: 0 3px 6px rgba(0,0,0,0.1);
   }
   
@@ -74,15 +74,16 @@
     margin: 4px 2px; padding: 10px 14px; font-size: 1em; border: none; border-radius: 6px; 
     background:#ff6f61; color:#fff; cursor:pointer; touch-action: manipulation;
   }
-  button:hover { background:#ff3b2e; }
-  button:disabled { background: #ccc; cursor: not-allowed; }
+  button:hover:not(:disabled) { background:#ff3b2e; }
+  button:disabled { background: #ccc; cursor: not-allowed; color: #666; }
 
   .cat {
     display: inline-block; margin: 4px; padding: 8px 12px; background:#ffe0b2; 
     border-radius: 20px; font-weight: bold; cursor:pointer; font-size: 0.9em;
-    box-shadow: 0 2px 0 #e6c598; transition: transform 0.1s;
+    box-shadow: 0 2px 0 #e6c598; transition: transform 0.1s, opacity 0.3s;
   }
-  .cat:active { transform: translateY(2px); box-shadow: none; }
+  .cat:active:not(.tired) { transform: translateY(2px); box-shadow: none; }
+  .cat.tired { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
   
   .customer {
     display: block; margin: 6px 0; padding: 8px; background:#c8e6c9; 
@@ -137,7 +138,7 @@
     <div class="section" id="cat-section">
       <h2>Adopt Cats</h2>
       <button onclick="adoptCat()">Adopt Cat (25 pts)</button>
-      <button onclick="playWithCat()">Play (+5 pts)</button>
+      <button id="btn-play" onclick="playWithCat()">Play (+5 pts)</button>
       <div id="cats"></div>
     </div>
     
@@ -179,6 +180,7 @@
   let cats = [];
   let customers = [];
   let currentCustomer = null;
+  let isCatTired = false; // New cooldown variable
   let upgrades = {
     faster_service: false,
     more_cats: false,
@@ -275,7 +277,6 @@
     document.getElementById('feedback').innerText = 'Game Over! Final Score: ' + score;
   }
 
-  // Core gameplay functions
   function adoptCat() {
     if (cats.length >= 8 && !upgrades.more_cats) {
       alert("You have enough cats! (or buy upgrade to adopt more)");
@@ -303,6 +304,8 @@
     cats.forEach(cat => {
       const catDiv = document.createElement('div');
       catDiv.className = 'cat';
+      // If a cooldown is active when a new cat is added, keep it tired
+      if (isCatTired) catDiv.classList.add('tired'); 
       catDiv.innerText = cat;
       catDiv.onclick = () => interactWithCat(cat);
       catsDiv.appendChild(catDiv);
@@ -442,10 +445,41 @@
   }
 
   function interactWithCat(cat) {
+    if (isCatTired) {
+      document.getElementById('feedback').innerText = "The cats are resting! Give them a moment.";
+      return;
+    }
+
     const feedbackDiv = document.getElementById('feedback');
     feedbackDiv.innerText = `You played with ${cat}! They purr happily. +5 points!`;
     score += 5;
     updateScore();
+
+    // Trigger 10-second cooldown
+    isCatTired = true;
+    const playBtn = document.getElementById('btn-play');
+    playBtn.disabled = true;
+    let cooldownTimer = 10;
+    playBtn.innerText = `Resting (${cooldownTimer}s)`;
+
+    // Visually gray out the cats
+    const catElements = document.querySelectorAll('.cat');
+    catElements.forEach(el => el.classList.add('tired'));
+
+    const interval = setInterval(() => {
+      cooldownTimer--;
+      if (cooldownTimer <= 0) {
+        // Reset after 10 seconds
+        clearInterval(interval);
+        isCatTired = false;
+        playBtn.disabled = false;
+        playBtn.innerText = "Play (+5 pts)";
+        const restoredCats = document.querySelectorAll('.cat');
+        restoredCats.forEach(el => el.classList.remove('tired'));
+      } else {
+        playBtn.innerText = `Resting (${cooldownTimer}s)`;
+      }
+    }, 1000);
   }
 
   function playWithCat() {
@@ -453,6 +487,8 @@
       alert("No cats to play with! Adopt one first.");
       return;
     }
+    if (isCatTired) return; // Prevent playing if already tired
+    
     const cat = cats[Math.floor(Math.random() * cats.length)];
     interactWithCat(cat);
   }
