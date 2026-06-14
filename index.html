@@ -1,481 +1,420 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2487.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Purrfect Cafe</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #fef8f0;
+    margin: 0; padding: 10px;
+  }
+  /* Title screen styles */
+  #titleScreen {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,0.95);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 999; padding: 10px;
+  }
+  #titleScreen h1 {
+    font-size: 2em; margin-bottom: 10px;
+  }
+  #difficulty, #timeLimitOptions {
+    margin: 8px 0;
+    font-size: 0.9em;
+  }
+  #minutesInput {
+    display: none; margin-top: 5px; width: 60px;
+  }
+  #startButton {
+    padding: 8px 16px; font-size: 1em; margin-top: 10px;
+    border-radius: 6px; background:#ff6f61; color:#fff; border:none; cursor:pointer;
+  }
+  #startButton:hover { background:#ff3b2e; }
+
+  /* Main game container hidden initially */
+  #mainGame { display: none; }
+
+  #score {
+    text-align: center; margin-top: 10px; font-size: 1.2em; font-weight: bold;
+  }
+  #timerDisplay {
+    text-align: center; margin-top: 5px; font-size: 1.2em; color:#333;
+  }
+  #game-area {
+    display: flex; flex-wrap: wrap; justify-content: center; margin-top: 10px;
+  }
+  .section {
+    background: #fff; border-radius: 6px; padding: 8px; margin: 5px; width: 45%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  h2 { font-size: 1.1em; margin-bottom: 6px; }
+  #cats, #customers {
+    min-height: 100px; margin-top: 8px; border: 1px dashed #ccc; padding: 8px; font-size: 0.9em;
+  }
+  button {
+    margin: 4px 0; padding: 6px 10px; font-size: 0.9em; border: none; border-radius: 4px; background:#ff6f61; color:#fff; cursor:pointer;
+  }
+  button:hover { background:#ff3b2e; }
+
+  .cat {
+    display: inline-block; margin: 3px; padding: 6px; background:#ffe0b2; border-radius: 6px; font-weight: bold; cursor:pointer; font-size: 0.85em;
+  }
+  .customer {
+    display: block; margin: 3px 0; padding: 4px; background:#c8e6c9; border-radius: 4px; font-size: 0.85em;
+  }
+  #upgrades { margin-top: 8px; padding: 6px; font-size: 0.9em; }
+  #ingredients { margin-top: 8px; font-size: 0.9em; }
+  #ingredients div { margin: 3px 0; }
+  #recipe-details {
+    margin-top: 8px; padding: 8px; background:#eef; border-radius: 4px; font-size: 0.9em;
+  }
+</style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1">&lt;meta charset="UTF-8" /&gt;</p>
-<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"/&gt;</p>
-<p class="p1">&lt;title&gt;Purrfect Cafe&lt;/title&gt;</p>
-<p class="p1">&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-family: Arial, sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #fef8f0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin: 0; padding: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* Title screen */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>#titleScreen {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>position: fixed; top: 0; left: 0; right: 0; bottom: 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: rgba(255,255,255,0.95);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: flex; flex-direction: column; align-items: center; justify-content: center;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>z-index: 999; padding: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>#titleScreen h1 {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 2em; margin-bottom: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>#difficulty, #timeLimitOptions {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin: 8px 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>font-size: 0.9em;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>#minutesInput {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: none; margin-top: 5px; width: 60px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>#startButton {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>padding: 8px 16px; font-size: 1em; margin-top: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>border-radius: 6px; background:#ff6f61; color:#fff; border:none; cursor:pointer;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>#startButton:hover { background:#ff3b2e; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>/* Main game container hidden initially */</p>
-<p class="p1"><span class="Apple-converted-space">  </span>#mainGame { display: none; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>#score {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>text-align: center; margin-top: 10px; font-size: 1.2em; font-weight: bold;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>#timerDisplay {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>text-align: center; margin-top: 5px; font-size: 1.2em; color:#333;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>#game-area {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: flex; flex-wrap: wrap; justify-content: center; margin-top: 10px;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.section {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>background: #fff; border-radius: 6px; padding: 8px; margin: 5px; width: 45%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>h2 { font-size: 1.1em; margin-bottom: 6px; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>#cats, #customers {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>min-height: 100px; margin-top: 8px; border: 1px dashed #ccc; padding: 8px; font-size: 0.9em;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>button {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin: 4px 0; padding: 6px 10px; font-size: 0.9em; border: none; border-radius: 4px; background:#ff6f61; color:#fff; cursor:pointer;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>button:hover { background:#ff3b2e; }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>.cat {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: inline-block; margin: 3px; padding: 6px; background:#ffe0b2; border-radius: 6px; font-weight: bold; cursor:pointer; font-size: 0.85em;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>.customer {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>display: block; margin: 3px 0; padding: 4px; background:#c8e6c9; border-radius: 4px; font-size: 0.85em;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>#upgrades { margin-top: 8px; padding: 6px; font-size: 0.9em; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>#ingredients { margin-top: 8px; font-size: 0.9em; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>#ingredients div { margin: 3px 0; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>#recipe-details {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>margin-top: 8px; padding: 8px; background:#eef; border-radius: 4px; font-size: 0.9em;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1">&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;!-- Title Screen --&gt;</p>
-<p class="p1">&lt;div id="titleScreen"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;h1&gt;Purrfect Cafe&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="difficulty"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;label&gt;Difficulty:&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;select id="difficultySelect" style="font-size: 0.9em;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;option value="easy"&gt;Easy&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;option value="medium" selected&gt;Medium&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;option value="hard"&gt;Hard&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/select&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="timeLimitOptions"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;label&gt;&lt;input type="radio" name="timing" value="none" checked /&gt; No Time Limit&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;label&gt;&lt;input type="radio" name="timing" value="minutes" /&gt; Time Limit (min)&lt;/label&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;input type="number" id="minutesInput" min="1" max="60" placeholder="Minutes" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;button id="startButton"&gt;Play&lt;/button&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;!-- Main Game --&gt;</p>
-<p class="p1">&lt;div id="mainGame"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="score"&gt;Score: 15&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="timerDisplay"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="game-area"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="section" id="cat-section"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;h2&gt;Adopt Cats&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="adoptCat()"&gt;Adopt a Cat&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="cats"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="section" id="customer-section"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;h2&gt;Customers&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="addCustomer()"&gt;New Customer&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;div id="customers"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="section" id="service-section"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;h2&gt;Serve Customer&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button onclick="serveCustomer()"&gt;Serve Next&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="currentCustomer"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="section" id="recipes-section"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;h2&gt;Recipes (Buy Ingredients)&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="ingredients"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="recipe-details"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button onclick="prepareRecipe('Coffee')"&gt;Serve Coffee&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button onclick="prepareRecipe('Tea')"&gt;Serve Tea&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button onclick="prepareRecipe('Snack')"&gt;Serve Snack&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="upgrades"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;h2&gt;Upgrades&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button onclick="buyUpgrade('faster_service')"&gt;Faster Service (-50 pts)&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button onclick="buyUpgrade('more_cats')"&gt;More Cats (-100 pts)&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button onclick="buyUpgrade('better_recipes')"&gt;Better Recipes (-75 pts)&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="catInteraction"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;h2&gt;Interact with Cats&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;button onclick="playWithCat()"&gt;Play with a Random Cat&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="selectedCat"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="feedback" style="text-align:center; margin-top:20px; font-weight:bold;"&gt;&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let score = 15;<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">  </span>let cats = [];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let customers = [];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let currentCustomer = null;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let upgrades = {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>faster_service: false,</p>
-<p class="p1"><span class="Apple-converted-space">    </span>more_cats: false,</p>
-<p class="p1"><span class="Apple-converted-space">    </span>better_recipes: false</p>
-<p class="p1"><span class="Apple-converted-space">  </span>};</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let gameTimer = null;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let timeRemainingSeconds = 0;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>let ingredientsStock = {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>Coffee: 0,</p>
-<p class="p1"><span class="Apple-converted-space">    </span>Tea: 0,</p>
-<p class="p1"><span class="Apple-converted-space">    </span>Snack: 0</p>
-<p class="p1"><span class="Apple-converted-space">  </span>};</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const ingredientPrices = {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>Coffee: 5,</p>
-<p class="p1"><span class="Apple-converted-space">    </span>Tea: 4,</p>
-<p class="p1"><span class="Apple-converted-space">    </span>Snack: 6</p>
-<p class="p1"><span class="Apple-converted-space">  </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>const catNames = ["Whiskers", "Mittens", "Shadow", "Luna", "Simba", "Oliver", "Chloe"];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const customerNames = ["Alice", "Bob", "Charlie", "Diana", "Ethan", "Fiona"];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>// Start button handler</p>
-<p class="p1">document.getElementById('startButton').onclick = () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>startGame();</p>
-<p class="p1">};</p>
-<p class="p2"><br></p>
-<p class="p1">function startGame() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const timingOption = document.querySelector('input[name="timing"]:checked').value;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let minutes = 0;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (timingOption === 'minutes') {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>minutes = parseInt(document.getElementById('minutesInput').value);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (isNaN(minutes) || minutes &lt; 1) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>alert("Please enter a valid number of minutes (at least 1).");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const difficulty = document.getElementById('difficultySelect').value;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (difficulty === 'easy') {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>score = 30;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} else if (difficulty === 'medium') {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>score = 15;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} else if (difficulty === 'hard') {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>score = 10;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('score').innerText = 'Score: ' + score;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('titleScreen').style.display = 'none';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('mainGame').style.display = 'block';</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (timingOption === 'minutes') {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>timeRemainingSeconds = minutes * 60;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>updateTimerDisplay();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>window.gameInterval = setInterval(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>timeRemainingSeconds--;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (timeRemainingSeconds &lt;= 0) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>clearInterval(window.gameInterval);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>endGame();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>updateTimerDisplay();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}, 1000);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('timerDisplay').innerText = '';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>displayCats();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>displayIngredients();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>updateScore();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function updateTimerDisplay() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const minutes = Math.floor(timeRemainingSeconds / 60);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const seconds = timeRemainingSeconds % 60;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('timerDisplay').innerText = `Time Remaining: ${minutes}:${seconds.toString().padStart(2, '0')}`;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function endGame() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>alert("Time's up! Game over. Your final score: " + score);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.querySelectorAll('button').forEach(btn =&gt; btn.disabled = true);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('feedback').innerText = 'Game Over! Final Score: ' + score;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// Core gameplay functions</p>
-<p class="p1">function adoptCat() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (cats.length &gt;= 8 &amp;&amp; !upgrades.more_cats) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>alert("You have enough cats! (or buy upgrade to adopt more)");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const cost = 25;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (score &lt; cost) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>alert("Not enough points to adopt a cat! Need " + cost + " points.");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const name = catNames[Math.floor(Math.random() * catNames.length)];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (cats.includes(name)) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>alert("This cat is already adopted!");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>cats.push(name);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>score -= cost;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>displayCats();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>updateScore();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function displayCats() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const catsDiv = document.getElementById('cats');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>catsDiv.innerHTML = '';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>cats.forEach(cat =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const catDiv = document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>catDiv.className = 'cat';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>catDiv.innerText = cat;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>catDiv.onclick = () =&gt; interactWithCat(cat);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>catsDiv.appendChild(catDiv);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function addCustomer() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (customers.length &gt;= 5) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>alert("Too many customers waiting!");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const name = customerNames[Math.floor(Math.random() * customerNames.length)];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (customers.includes(name)) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>alert("This customer is already waiting!");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>customers.push(name);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>displayCustomers();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function displayCustomers() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const customersDiv = document.getElementById('customers');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>customersDiv.innerHTML = '';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>customers.forEach(cust =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const custDiv = document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>custDiv.className = 'customer';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>custDiv.innerText = cust;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>customersDiv.appendChild(custDiv);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function serveCustomer() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (customers.length === 0) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>alert("No customers to serve!");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>currentCustomer = customers.shift();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('currentCustomer').innerHTML = 'Serving: ' + currentCustomer;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>displayCustomers();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('feedback').innerText = 'Choose a recipe to serve!';</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function prepareRecipe(recipe) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!currentCustomer) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>alert("No customer is being served!");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (ingredientsStock[recipe] &lt;= 0) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>alert("Need to buy ingredients for " + recipe + " first!");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let successChance = 0.7;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (upgrades.better_recipes) successChance = 0.9;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const success = Math.random() &lt; successChance;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (success) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>score += 20;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('feedback').innerText = currentCustomer + " loved the " + recipe + "! +20 points.";</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>score -= 10;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('feedback').innerText = currentCustomer + " didn't like the " + recipe + ". -10 points.";</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>ingredientsStock[recipe]--;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>updateScore();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>currentCustomer = null;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('currentCustomer').innerHTML = '';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>displayIngredients();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function buyIngredient(recipe) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const price = ingredientPrices[recipe];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (score &lt; price) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>alert("Not enough points to buy " + recipe + " ingredients!");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>score -= price;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>ingredientsStock[recipe]++;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>updateScore();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>displayIngredients();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function displayIngredients() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const ingDiv = document.getElementById('ingredients');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>ingDiv.innerHTML = '';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>for (let recipe in ingredientsStock) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>ingDiv.innerHTML += `&lt;div&gt;${recipe}: ${ingredientsStock[recipe]}<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="buyIngredient('${recipe}')"&gt;Buy (+1, ${ingredientPrices[recipe]} pts)&lt;/button&gt;&lt;/div&gt;`;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function buyUpgrade(upgrade) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (score &lt; 50 &amp;&amp; upgrade !== 'more_cats') {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>alert("Not enough points for this upgrade!");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>switch (upgrade) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>case 'faster_service':</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (!upgrades.faster_service) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>upgrades.faster_service = true;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>score -= 50;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>alert("Faster Service unlocked!");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>alert("Already purchased!");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>break;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>case 'more_cats':</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (!upgrades.more_cats) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (score &gt;= 100) {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>upgrades.more_cats = true;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>score -= 100;</p>
-<p class="p1"><span class="Apple-converted-space">          </span>alert("More Cats unlocked! You can adopt more cats.");</p>
-<p class="p1"><span class="Apple-converted-space">        </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">          </span>alert("Need 100 points for this upgrade.");</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>alert("Already purchased!");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>break;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>case 'better_recipes':</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (!upgrades.better_recipes) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>score -= 75;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>upgrades.better_recipes = true;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>alert("Better Recipes unlocked! Customers are happier.");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>alert("Already purchased!");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">      </span>break;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>updateScore();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function interactWithCat(cat) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const feedbackDiv = document.getElementById('feedback');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>feedbackDiv.innerText = `You played with ${cat}! They purr happily. +5 points!`;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>score += 5;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>updateScore();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function playWithCat() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (cats.length === 0) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>alert("No cats to play with!");</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const cat = cats[Math.floor(Math.random() * cats.length)];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>interactWithCat(cat);</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function updateScore() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('score').innerText = 'Score: ' + score;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// Timer functions</p>
-<p class="p1">function updateTimerDisplay() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const minutes = Math.floor(timeRemainingSeconds / 60);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const seconds = timeRemainingSeconds % 60;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('timerDisplay').innerText = `Time Remaining: ${minutes}:${seconds.toString().padStart(2, '0')}`;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function endGame() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>alert("Time's up! Game over. Your final score: " + score);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.querySelectorAll('button').forEach(btn =&gt; btn.disabled = true);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('feedback').innerText = 'Game Over! Final Score: ' + score;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// Start game with timer</p>
-<p class="p1">function startGame() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const timingOption = document.querySelector('input[name="timing"]:checked').value;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let minutes = 0;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (timingOption === 'minutes') {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>minutes = parseInt(document.getElementById('minutesInput').value);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (isNaN(minutes) || minutes &lt; 1) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>alert("Please enter a valid number of minutes (at least 1).");</p>
-<p class="p1"><span class="Apple-converted-space">      </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const difficulty = document.getElementById('difficultySelect').value;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (difficulty === 'easy') {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>score = 30;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} else if (difficulty === 'medium') {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>score = 15;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} else if (difficulty === 'hard') {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>score = 10;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('score').innerText = 'Score: ' + score;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('titleScreen').style.display = 'none';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('mainGame').style.display = 'block';</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (timingOption === 'minutes') {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>timeRemainingSeconds = minutes * 60;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>updateTimerDisplay();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>window.gameInterval = setInterval(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>timeRemainingSeconds--;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (timeRemainingSeconds &lt;= 0) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>clearInterval(window.gameInterval);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>endGame();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>updateTimerDisplay();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}, 1000);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('timerDisplay').innerText = '';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">  </span>displayCats();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>displayIngredients();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>updateScore();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">// Initialize display</p>
-<p class="p1">displayCats();</p>
-<p class="p1">displayIngredients();</p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+
+<div id="titleScreen">
+  <h1>Purrfect Cafe</h1>
+  <div id="difficulty">
+    <label>Difficulty:</label>
+    <select id="difficultySelect" style="font-size: 0.9em;">
+      <option value="easy">Easy</option>
+      <option value="medium" selected>Medium</option>
+      <option value="hard">Hard</option>
+    </select>
+  </div>
+  <div id="timeLimitOptions">
+    <label><input type="radio" name="timing" value="none" checked /> No Time Limit</label>
+    <label><input type="radio" name="timing" value="minutes" /> Time Limit (min)</label>
+    <input type="number" id="minutesInput" min="1" max="60" placeholder="Minutes" />
+  </div>
+  <button id="startButton">Play</button>
+</div>
+
+<div id="mainGame">
+  <div id="score">Score: 15</div>
+  <div id="timerDisplay"></div>
+  <div id="game-area">
+    <div class="section" id="cat-section">
+      <h2>Adopt Cats</h2>
+      <button onclick="adoptCat()">Adopt a Cat</button>
+      <div id="cats"></div>
+    </div>
+    <div class="section" id="customer-section">
+      <h2>Customers</h2>
+      <button onclick="addCustomer()">New Customer</button>
+      <div id="customers"></div>
+    </div>
+  </div>
+  <div class="section" id="service-section">
+    <h2>Serve Customer</h2>
+    <button onclick="serveCustomer()">Serve Next</button>
+    <div id="currentCustomer"></div>
+  </div>
+  <div class="section" id="recipes-section">
+    <h2>Recipes (Buy Ingredients)</h2>
+    <div id="ingredients"></div>
+    <div id="recipe-details"></div>
+    <button onclick="prepareRecipe('Coffee')">Serve Coffee</button>
+    <button onclick="prepareRecipe('Tea')">Serve Tea</button>
+    <button onclick="prepareRecipe('Snack')">Serve Snack</button>
+  </div>
+  <div id="upgrades">
+    <h2>Upgrades</h2>
+    <button onclick="buyUpgrade('faster_service')">Faster Service (-50 pts)</button>
+    <button onclick="buyUpgrade('more_cats')">More Cats (-100 pts)</button>
+    <button onclick="buyUpgrade('better_recipes')">Better Recipes (-75 pts)</button>
+  </div>
+  <div id="catInteraction">
+    <h2>Interact with Cats</h2>
+    <button onclick="playWithCat()">Play with a Random Cat</button>
+    <div id="selectedCat"></div>
+  </div>
+  <div id="feedback" style="text-align:center; margin-top:20px; font-weight:bold;"></div>
+</div>
+
+<script>
+  let score = 15; 
+  let cats = [];
+  let customers = [];
+  let currentCustomer = null;
+  let upgrades = {
+    faster_service: false,
+    more_cats: false,
+    better_recipes: false
+  };
+  let gameTimer = null;
+  let timeRemainingSeconds = 0;
+
+  let ingredientsStock = {
+    Coffee: 0,
+    Tea: 0,
+    Snack: 0
+  };
+  const ingredientPrices = {
+    Coffee: 5,
+    Tea: 4,
+    Snack: 6
+  };
+
+  const catNames = ["Whiskers", "Mittens", "Shadow", "Luna", "Simba", "Oliver", "Chloe"];
+  const customerNames = ["Alice", "Bob", "Charlie", "Diana", "Ethan", "Fiona"];
+
+  // Setup the input toggle for the custom timer
+  const timingRadios = document.querySelectorAll('input[name="timing"]');
+  const minutesInput = document.getElementById('minutesInput');
+  timingRadios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      if (e.target.value === 'minutes') {
+        minutesInput.style.display = 'inline-block';
+      } else {
+        minutesInput.style.display = 'none';
+      }
+    });
+  });
+
+  // Start button handler
+  document.getElementById('startButton').onclick = () => {
+    startGame();
+  };
+
+  function startGame() {
+    const timingOption = document.querySelector('input[name="timing"]:checked').value;
+    let minutes = 0;
+    if (timingOption === 'minutes') {
+      minutes = parseInt(document.getElementById('minutesInput').value);
+      if (isNaN(minutes) || minutes < 1) {
+        alert("Please enter a valid number of minutes (at least 1).");
+        return;
+      }
+    }
+    const difficulty = document.getElementById('difficultySelect').value;
+    if (difficulty === 'easy') {
+      score = 30;
+    } else if (difficulty === 'medium') {
+      score = 15;
+    } else if (difficulty === 'hard') {
+      score = 10;
+    }
+    
+    document.getElementById('score').innerText = 'Score: ' + score;
+    document.getElementById('titleScreen').style.display = 'none';
+    document.getElementById('mainGame').style.display = 'block';
+
+    if (timingOption === 'minutes') {
+      timeRemainingSeconds = minutes * 60;
+      updateTimerDisplay();
+      window.gameInterval = setInterval(() => {
+        timeRemainingSeconds--;
+        if (timeRemainingSeconds <= 0) {
+          clearInterval(window.gameInterval);
+          endGame();
+        } else {
+          updateTimerDisplay();
+        }
+      }, 1000);
+    } else {
+      document.getElementById('timerDisplay').innerText = '';
+    }
+
+    displayCats();
+    displayIngredients();
+    updateScore();
+  }
+
+  function updateTimerDisplay() {
+    const minutes = Math.floor(timeRemainingSeconds / 60);
+    const seconds = timeRemainingSeconds % 60;
+    document.getElementById('timerDisplay').innerText = `Time Remaining: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  function endGame() {
+    alert("Time's up! Game over. Your final score: " + score);
+    document.querySelectorAll('button').forEach(btn => btn.disabled = true);
+    document.getElementById('feedback').innerText = 'Game Over! Final Score: ' + score;
+  }
+
+  // Core gameplay functions
+  function adoptCat() {
+    if (cats.length >= 8 && !upgrades.more_cats) {
+      alert("You have enough cats! (or buy upgrade to adopt more)");
+      return;
+    }
+    const cost = 25;
+    if (score < cost) {
+      alert("Not enough points to adopt a cat! Need " + cost + " points.");
+      return;
+    }
+    const name = catNames[Math.floor(Math.random() * catNames.length)];
+    if (cats.includes(name)) {
+      alert("This cat is already adopted!");
+      return;
+    }
+    cats.push(name);
+    score -= cost;
+    displayCats();
+    updateScore();
+  }
+
+  function displayCats() {
+    const catsDiv = document.getElementById('cats');
+    catsDiv.innerHTML = '';
+    cats.forEach(cat => {
+      const catDiv = document.createElement('div');
+      catDiv.className = 'cat';
+      catDiv.innerText = cat;
+      catDiv.onclick = () => interactWithCat(cat);
+      catsDiv.appendChild(catDiv);
+    });
+  }
+
+  function addCustomer() {
+    if (customers.length >= 5) {
+      alert("Too many customers waiting!");
+      return;
+    }
+    const name = customerNames[Math.floor(Math.random() * customerNames.length)];
+    if (customers.includes(name)) {
+      alert("This customer is already waiting!");
+      return;
+    }
+    customers.push(name);
+    displayCustomers();
+  }
+
+  function displayCustomers() {
+    const customersDiv = document.getElementById('customers');
+    customersDiv.innerHTML = '';
+    customers.forEach(cust => {
+      const custDiv = document.createElement('div');
+      custDiv.className = 'customer';
+      custDiv.innerText = cust;
+      customersDiv.appendChild(custDiv);
+    });
+  }
+
+  function serveCustomer() {
+    if (currentCustomer !== null) {
+      alert("You are already serving someone! Finish their order first.");
+      return;
+    }
+    if (customers.length === 0) {
+      alert("No customers to serve!");
+      return;
+    }
+    currentCustomer = customers.shift();
+    document.getElementById('currentCustomer').innerHTML = 'Serving: ' + currentCustomer;
+    displayCustomers();
+    document.getElementById('feedback').innerText = 'Choose a recipe to serve!';
+  }
+
+  function prepareRecipe(recipe) {
+    if (!currentCustomer) {
+      alert("No customer is being served!");
+      return;
+    }
+    if (ingredientsStock[recipe] <= 0) {
+      alert("Need to buy ingredients for " + recipe + " first!");
+      return;
+    }
+    let successChance = 0.7;
+    if (upgrades.better_recipes) successChance = 0.9;
+    const success = Math.random() < successChance;
+    if (success) {
+      score += 20;
+      document.getElementById('feedback').innerText = currentCustomer + " loved the " + recipe + "! +20 points.";
+    } else {
+      score -= 10;
+      document.getElementById('feedback').innerText = currentCustomer + " didn't like the " + recipe + ". -10 points.";
+    }
+    ingredientsStock[recipe]--;
+    updateScore();
+    currentCustomer = null;
+    document.getElementById('currentCustomer').innerHTML = '';
+    displayIngredients();
+  }
+
+  function buyIngredient(recipe) {
+    const price = ingredientPrices[recipe];
+    if (score < price) {
+      alert("Not enough points to buy " + recipe + " ingredients!");
+      return;
+    }
+    score -= price;
+    ingredientsStock[recipe]++;
+    updateScore();
+    displayIngredients();
+  }
+
+  function displayIngredients() {
+    const ingDiv = document.getElementById('ingredients');
+    ingDiv.innerHTML = '';
+    for (let recipe in ingredientsStock) {
+      ingDiv.innerHTML += `<div>${recipe}: ${ingredientsStock[recipe]} 
+        <button onclick="buyIngredient('${recipe}')">Buy (+1, ${ingredientPrices[recipe]} pts)</button></div>`;
+    }
+  }
+
+  function buyUpgrade(upgrade) {
+    if (score < 50 && upgrade !== 'more_cats') {
+      alert("Not enough points for this upgrade!");
+      return;
+    }
+    switch (upgrade) {
+      case 'faster_service':
+        if (!upgrades.faster_service) {
+          upgrades.faster_service = true;
+          score -= 50;
+          alert("Faster Service unlocked!");
+        } else {
+          alert("Already purchased!");
+        }
+        break;
+      case 'more_cats':
+        if (!upgrades.more_cats) {
+          if (score >= 100) {
+            upgrades.more_cats = true;
+            score -= 100;
+            alert("More Cats unlocked! You can adopt more cats.");
+          } else {
+            alert("Need 100 points for this upgrade.");
+          }
+        } else {
+          alert("Already purchased!");
+        }
+        break;
+      case 'better_recipes':
+        if (!upgrades.better_recipes) {
+          score -= 75;
+          upgrades.better_recipes = true;
+          alert("Better Recipes unlocked! Customers are happier.");
+        } else {
+          alert("Already purchased!");
+        }
+        break;
+    }
+    updateScore();
+  }
+
+  function interactWithCat(cat) {
+    const feedbackDiv = document.getElementById('feedback');
+    feedbackDiv.innerText = `You played with ${cat}! They purr happily. +5 points!`;
+    score += 5;
+    updateScore();
+  }
+
+  function playWithCat() {
+    if (cats.length === 0) {
+      alert("No cats to play with!");
+      return;
+    }
+    const cat = cats[Math.floor(Math.random() * cats.length)];
+    interactWithCat(cat);
+  }
+
+  function updateScore() {
+    document.getElementById('score').innerText = 'Score: ' + score;
+  }
+</script>
 </body>
 </html>
