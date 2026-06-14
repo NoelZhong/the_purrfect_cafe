@@ -2,73 +2,111 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>Purrfect Cafe</title>
 <style>
   body {
     font-family: Arial, sans-serif;
     background: #fef8f0;
-    margin: 0; padding: 10px;
+    margin: 0; 
+    padding: 10px;
+    box-sizing: border-box;
   }
+  
   /* Title screen styles */
   #titleScreen {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(255,255,255,0.95);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    z-index: 999; padding: 10px;
+    z-index: 999; padding: 20px; text-align: center;
   }
   #titleScreen h1 {
-    font-size: 2em; margin-bottom: 10px;
+    font-size: 2.5em; margin-bottom: 15px; color: #333;
   }
   #difficulty, #timeLimitOptions {
-    margin: 8px 0;
-    font-size: 0.9em;
+    margin: 12px 0;
+    font-size: 1.1em;
+  }
+  /* Prevent iOS zoom on focus */
+  select, input[type="number"] {
+    font-size: 16px;
+    padding: 6px;
   }
   #minutesInput {
-    display: none; margin-top: 5px; width: 60px;
+    display: none; margin-top: 10px; width: 80px;
   }
   #startButton {
-    padding: 8px 16px; font-size: 1em; margin-top: 10px;
-    border-radius: 6px; background:#ff6f61; color:#fff; border:none; cursor:pointer;
+    padding: 12px 24px; font-size: 1.2em; margin-top: 20px;
+    border-radius: 8px; background:#ff6f61; color:#fff; border:none; cursor:pointer;
+    width: 80%; max-width: 300px;
   }
   #startButton:hover { background:#ff3b2e; }
 
   /* Main game container hidden initially */
-  #mainGame { display: none; }
+  #mainGame { display: none; max-width: 800px; margin: 0 auto; }
 
   #score {
-    text-align: center; margin-top: 10px; font-size: 1.2em; font-weight: bold;
+    text-align: center; margin-top: 10px; font-size: 1.5em; font-weight: bold; color: #444;
   }
   #timerDisplay {
-    text-align: center; margin-top: 5px; font-size: 1.2em; color:#333;
+    text-align: center; margin-top: 5px; font-size: 1.2em; color:#d9534f; font-weight: bold;
   }
-  #game-area {
-    display: flex; flex-wrap: wrap; justify-content: center; margin-top: 10px;
+  
+  /* Responsive Grid/Flexbox */
+  #game-area, #bottom-area {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 15px;
   }
   .section {
-    background: #fff; border-radius: 6px; padding: 8px; margin: 5px; width: 45%; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background: #fff; border-radius: 8px; padding: 15px; 
+    flex: 1 1 calc(50% - 20px); /* Takes up half screen minus gap */
+    min-width: 280px; /* Stacks on mobile when screen is too narrow */
+    box-sizing: border-box; box-shadow: 0 3px 6px rgba(0,0,0,0.1);
   }
-  h2 { font-size: 1.1em; margin-bottom: 6px; }
+  
+  h2 { font-size: 1.2em; margin-top: 0; margin-bottom: 10px; color: #333; border-bottom: 2px solid #f0f0f0; padding-bottom: 5px;}
+  
   #cats, #customers {
-    min-height: 100px; margin-top: 8px; border: 1px dashed #ccc; padding: 8px; font-size: 0.9em;
+    min-height: 80px; margin-top: 10px; border: 2px dashed #ccc; padding: 10px; border-radius: 6px; background: #fafafa;
   }
+  
+  /* Mobile-friendly Touch Targets */
   button {
-    margin: 4px 0; padding: 6px 10px; font-size: 0.9em; border: none; border-radius: 4px; background:#ff6f61; color:#fff; cursor:pointer;
+    margin: 4px 2px; padding: 10px 14px; font-size: 1em; border: none; border-radius: 6px; 
+    background:#ff6f61; color:#fff; cursor:pointer; touch-action: manipulation;
   }
   button:hover { background:#ff3b2e; }
+  button:disabled { background: #ccc; cursor: not-allowed; }
 
   .cat {
-    display: inline-block; margin: 3px; padding: 6px; background:#ffe0b2; border-radius: 6px; font-weight: bold; cursor:pointer; font-size: 0.85em;
+    display: inline-block; margin: 4px; padding: 8px 12px; background:#ffe0b2; 
+    border-radius: 20px; font-weight: bold; cursor:pointer; font-size: 0.9em;
+    box-shadow: 0 2px 0 #e6c598; transition: transform 0.1s;
   }
+  .cat:active { transform: translateY(2px); box-shadow: none; }
+  
   .customer {
-    display: block; margin: 3px 0; padding: 4px; background:#c8e6c9; border-radius: 4px; font-size: 0.85em;
+    display: block; margin: 6px 0; padding: 8px; background:#c8e6c9; 
+    border-radius: 6px; font-size: 0.95em; font-weight: bold; color: #2e7d32;
   }
-  #upgrades { margin-top: 8px; padding: 6px; font-size: 0.9em; }
-  #ingredients { margin-top: 8px; font-size: 0.9em; }
-  #ingredients div { margin: 3px 0; }
+  
+  #upgrades { margin-top: 10px; font-size: 1em; }
+  #ingredients { margin-top: 10px; font-size: 1em; }
+  #ingredients div { margin: 8px 0; display: flex; align-items: center; justify-content: space-between; background: #f9f9f9; padding: 5px 10px; border-radius: 6px;}
+  
   #recipe-details {
-    margin-top: 8px; padding: 8px; background:#eef; border-radius: 4px; font-size: 0.9em;
+    margin-top: 15px; padding: 10px; background:#e8f4f8; border-radius: 6px; font-size: 1em; text-align: center;
   }
+  
+  #currentCustomer {
+    font-size: 1.1em; font-weight: bold; margin-top: 10px; color: #1565c0;
+  }
+  
+  #feedback {
+    text-align:center; margin-top:20px; padding: 15px; background: #fff3e0; 
+    border-radius: 8px; font-weight:bold; font-size: 1.1em; color: #e65100;
+    min-height: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
 </style>
 </head>
 <body>
@@ -77,60 +115,63 @@
   <h1>Purrfect Cafe</h1>
   <div id="difficulty">
     <label>Difficulty:</label>
-    <select id="difficultySelect" style="font-size: 0.9em;">
+    <select id="difficultySelect">
       <option value="easy">Easy</option>
       <option value="medium" selected>Medium</option>
       <option value="hard">Hard</option>
     </select>
   </div>
   <div id="timeLimitOptions">
-    <label><input type="radio" name="timing" value="none" checked /> No Time Limit</label>
-    <label><input type="radio" name="timing" value="minutes" /> Time Limit (min)</label>
-    <input type="number" id="minutesInput" min="1" max="60" placeholder="Minutes" />
+    <div style="margin-bottom: 8px;"><label><input type="radio" name="timing" value="none" checked /> No Time Limit</label></div>
+    <div><label><input type="radio" name="timing" value="minutes" /> Time Limit</label></div>
+    <input type="number" id="minutesInput" min="1" max="60" placeholder="Min" />
   </div>
-  <button id="startButton">Play</button>
+  <button id="startButton">Play Now</button>
 </div>
 
 <div id="mainGame">
   <div id="score">Score: 15</div>
   <div id="timerDisplay"></div>
+  
   <div id="game-area">
     <div class="section" id="cat-section">
       <h2>Adopt Cats</h2>
-      <button onclick="adoptCat()">Adopt a Cat</button>
+      <button onclick="adoptCat()">Adopt Cat (25 pts)</button>
+      <button onclick="playWithCat()">Play (+5 pts)</button>
       <div id="cats"></div>
     </div>
+    
     <div class="section" id="customer-section">
       <h2>Customers</h2>
       <button onclick="addCustomer()">New Customer</button>
+      <button onclick="serveCustomer()">Serve Next</button>
+      <div id="currentCustomer"></div>
       <div id="customers"></div>
     </div>
   </div>
-  <div class="section" id="service-section">
-    <h2>Serve Customer</h2>
-    <button onclick="serveCustomer()">Serve Next</button>
-    <div id="currentCustomer"></div>
+
+  <div id="bottom-area">
+    <div class="section" id="recipes-section">
+      <h2>Pantry & Service</h2>
+      <div id="ingredients"></div>
+      <div id="recipe-details">
+        <button onclick="prepareRecipe('Coffee')">Serve Coffee</button>
+        <button onclick="prepareRecipe('Tea')">Serve Tea</button>
+        <button onclick="prepareRecipe('Snack')">Serve Snack</button>
+      </div>
+    </div>
+    
+    <div class="section" id="upgrades-section">
+      <h2>Cafe Upgrades</h2>
+      <div id="upgrades">
+        <button id="btn-faster" onclick="buyUpgrade('faster_service')">Faster Service (-50 pts)</button>
+        <button id="btn-cats" onclick="buyUpgrade('more_cats')">More Cats (-100 pts)</button>
+        <button id="btn-recipes" onclick="buyUpgrade('better_recipes')">Better Recipes (-75 pts)</button>
+      </div>
+    </div>
   </div>
-  <div class="section" id="recipes-section">
-    <h2>Recipes (Buy Ingredients)</h2>
-    <div id="ingredients"></div>
-    <div id="recipe-details"></div>
-    <button onclick="prepareRecipe('Coffee')">Serve Coffee</button>
-    <button onclick="prepareRecipe('Tea')">Serve Tea</button>
-    <button onclick="prepareRecipe('Snack')">Serve Snack</button>
-  </div>
-  <div id="upgrades">
-    <h2>Upgrades</h2>
-    <button onclick="buyUpgrade('faster_service')">Faster Service (-50 pts)</button>
-    <button onclick="buyUpgrade('more_cats')">More Cats (-100 pts)</button>
-    <button onclick="buyUpgrade('better_recipes')">Better Recipes (-75 pts)</button>
-  </div>
-  <div id="catInteraction">
-    <h2>Interact with Cats</h2>
-    <button onclick="playWithCat()">Play with a Random Cat</button>
-    <div id="selectedCat"></div>
-  </div>
-  <div id="feedback" style="text-align:center; margin-top:20px; font-weight:bold;"></div>
+  
+  <div id="feedback">Welcome to the Cafe! Adopt a cat to start.</div>
 </div>
 
 <script>
@@ -350,8 +391,8 @@
     const ingDiv = document.getElementById('ingredients');
     ingDiv.innerHTML = '';
     for (let recipe in ingredientsStock) {
-      ingDiv.innerHTML += `<div>${recipe}: ${ingredientsStock[recipe]} 
-        <button onclick="buyIngredient('${recipe}')">Buy (+1, ${ingredientPrices[recipe]} pts)</button></div>`;
+      ingDiv.innerHTML += `<div><strong>${recipe}</strong>: ${ingredientsStock[recipe]} 
+        <button onclick="buyIngredient('${recipe}')">Buy (-${ingredientPrices[recipe]} pts)</button></div>`;
     }
   }
 
@@ -365,9 +406,9 @@
         if (!upgrades.faster_service) {
           upgrades.faster_service = true;
           score -= 50;
+          document.getElementById('btn-faster').disabled = true;
+          document.getElementById('btn-faster').innerText = "Faster Service (Purchased)";
           alert("Faster Service unlocked!");
-        } else {
-          alert("Already purchased!");
         }
         break;
       case 'more_cats':
@@ -375,21 +416,25 @@
           if (score >= 100) {
             upgrades.more_cats = true;
             score -= 100;
+            document.getElementById('btn-cats').disabled = true;
+            document.getElementById('btn-cats').innerText = "More Cats (Purchased)";
             alert("More Cats unlocked! You can adopt more cats.");
           } else {
             alert("Need 100 points for this upgrade.");
           }
-        } else {
-          alert("Already purchased!");
         }
         break;
       case 'better_recipes':
         if (!upgrades.better_recipes) {
-          score -= 75;
-          upgrades.better_recipes = true;
-          alert("Better Recipes unlocked! Customers are happier.");
-        } else {
-          alert("Already purchased!");
+          if (score >= 75) {
+            score -= 75;
+            upgrades.better_recipes = true;
+            document.getElementById('btn-recipes').disabled = true;
+            document.getElementById('btn-recipes').innerText = "Better Recipes (Purchased)";
+            alert("Better Recipes unlocked! Customers are happier.");
+          } else {
+             alert("Need 75 points for this upgrade.");
+          }
         }
         break;
     }
@@ -405,7 +450,7 @@
 
   function playWithCat() {
     if (cats.length === 0) {
-      alert("No cats to play with!");
+      alert("No cats to play with! Adopt one first.");
       return;
     }
     const cat = cats[Math.floor(Math.random() * cats.length)];
